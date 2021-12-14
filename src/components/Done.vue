@@ -70,7 +70,7 @@
 
 <script>
 export default {
-  name: "Card",
+  name: "Done",
 
   props: {
     details: Boolean,

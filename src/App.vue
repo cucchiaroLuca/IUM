@@ -7,54 +7,88 @@
     </div>
   </header>
 
-  <div class="labelContainer">
-    <h3>TASKS TO DO:</h3>
-  </div>
-
   <section class="cardsContainer">
+    <div class="labelContainer">
+      <h3>TASKS TO DO:</h3>
+    </div>
+
     <card
-    v-for="card in cards"
-    :key="card.machineTag"
-    :details="card.moreDetails"
-    :tag="card.machineTag"
-    :mName="card.name"
-    :expireD="card.expireDate"
-    :expireI="card.expireIn"
-    :asset="card.assetType"
-    :mDescription="card.description"
-    :estimated="card.estimatedTime"
-    :similar="card.similarMachine"
-    :mAppointee="card.appointee"
-    :mResponsible="card.responsible"
-    :mSpentKey="card.timeSpentKey"
-    :mSpentOn="card.timeSpentOn"
-    @change-dsc="changeDsc"
+      v-for="card in cards"
+      :key="card.machineTag"
+      :details="card.moreDetails"
+      :tag="card.machineTag"
+      :mName="card.name"
+      :expireD="card.expireDate"
+      :expireDs="card.expireDateString"
+      :expireI="card.expireIn"
+      :asset="card.assetType"
+      :mDescription="card.description"
+      :estimated="card.estimatedTime"
+      :similar="card.similarMachine"
+      :mAppointee="card.appointee"
+      :mResponsible="card.responsible"
+      :mSpentKey="card.timeSpentKey"
+      :mSpentOn="card.timeSpentOn"
+      :inputKey="card.validInput"
+      @change-dsc="changeDsc"
+      @change-time="changeTime"
+      @time-spent-on="timeSpentOn"
+      @change-input-key="changeInputKey"
     ></card>
   </section>
 
-  <div class="doneLabelContainer">
-    <h3>TASKS DONE:</h3>
-  </div>
+  <section class="cardsContainer">
+    <div class="doneLabelContainer">
+      <h3>TASKS DONE:</h3>
+    </div>
+
+    <done
+      v-for="doneCard in doneCards"
+      :key="doneCard.machineTag"
+      :details="doneCard.moreDetails"
+      :tag="doneCard.machineTag"
+      :mName="doneCard.name"
+      :expireD="doneCard.expireDate"
+      :expireDs="doneCard.expireDateString"
+      :expireI="doneCard.expireIn"
+      :asset="doneCard.assetType"
+      :mDescription="doneCard.description"
+      :estimated="doneCard.estimatedTime"
+      :similar="doneCard.similarMachine"
+      :mAppointee="doneCard.appointee"
+      :mResponsible="doneCard.responsible"
+      :mSpentKey="doneCard.timeSpentKey"
+      :mSpentOn="doneCard.timeSpentOn"
+      :inputKey="doneCard.validInput"
+      @change-dsc="changeDsc"
+      @change-time="changeTime"
+      @time-spent-on="timeSpentOn"
+      @change-input-key="changeInputKey"
+    ></done>
+  </section>
 </template>
 
 <script>
 import Card from "./components/Card.vue";
+import Done from "./components/Done.vue";
 
 export default {
   name: "App",
   components: {
     Card,
+    Done,
   },
 
   data() {
     return {
-      currentDay: Date,
+      currentDay: new Date(),
       cards: [
         {
           moreDetails: false,
           machineTag: "3894",
           name: "Name1",
-          expireDate: new Date(2021, 11, 13).toDateString(),
+          expireDate: new Date(2021, 11, 13),
+          expireDateString: new Date(2021, 11, 13).toDateString(),
           expireIn: Number,
           assetType: "Vehicle",
           description:
@@ -65,12 +99,14 @@ export default {
           responsible: "Luigi Praticò",
           timeSpentKey: false,
           timeSpentOn: 0,
+          validInput: false,
         },
         {
           moreDetails: false,
           machineTag: "8465",
           name: "Name2",
-          expireDate: new Date(2021, 11, 18).toDateString(),
+          expireDate: new Date(2021, 11, 18),
+          expireDateString: new Date(2021, 11, 18).toDateString(),
           expireIn: Number,
           assetType: "Machine",
           description:
@@ -81,12 +117,14 @@ export default {
           responsible: "Luigi Praticò",
           timeSpentKey: false,
           timeSpentOn: 0,
+          validInput: false,
         },
         {
           moreDetails: false,
           machineTag: "8305",
           name: "Name3",
-          expireDate: new Date(2021, 11, 23).toDateString(),
+          expireDate: new Date(2021, 11, 23),
+          expireDateString: new Date(2021, 11, 23).toDateString(),
           expireIn: Number,
           assetType: "Eletronics",
           description:
@@ -97,13 +135,34 @@ export default {
           responsible: "Luigi Praticò",
           timeSpentKey: false,
           timeSpentOn: 0,
+          validInput: false,
         },
       ],
       doneCards: [],
     };
   },
 
+  created: function () {
+    this.updateDates();
+  },
+
   methods: {
+    updateDates() {
+      for (this.i = 0; this.i < this.cards.length; this.i++) {
+        this.expireDateFormat = new Date(this.cards[this.i].expireDate);
+
+        this.oneDay = 24 * 60 * 60 * 1000;
+        this.firstDate = this.currentDay;
+        this.secondDate = this.cards[this.i].expireDate;
+
+        this.diffDays = Math.round(
+          Math.abs((this.firstDate - this.secondDate) / this.oneDay)
+        );
+
+        this.cards[this.i].expireIn = this.diffDays;
+      }
+    },
+
     currentDateTime() {
       const current = new Date();
       const date =
@@ -119,10 +178,39 @@ export default {
     },
 
     changeDsc(mObject) {
-      console.log(mObject);
+      this.index = this.cards.findIndex(
+        (element) => element.machineTag === mObject.machineId
+      );
+      mObject.machineDetail = !mObject.machineDetail;
+      this.cards[this.index].moreDetails = mObject.machineDetail;
+    },
 
-      
-    }
+    changeTime(mObject) {
+      this.index = this.cards.findIndex(
+        (element) => element.machineTag === mObject.machineId
+      );
+      mObject.machineTimeSpentKey = !mObject.machineTimeSpentKey;
+      this.cards[this.index].timeSpentKey = mObject.machineTimeSpentKey;
+    },
+
+    timeSpentOn(mObject) {
+      this.index = this.cards.findIndex(
+        (element) => element.machineTag === mObject.machineId
+      );
+
+      this.cards[this.index].timeSpentOn = mObject.inputV;
+      this.doneCards.push(this.cards[this.index]);
+
+      this.cards.splice(this.index, 1);
+    },
+
+    changeInputKey(mObject) {
+      this.index = this.cards.findIndex(
+        (element) => element.machineTag === mObject.machineId
+      );
+
+      this.cards[this.index].validInput = true;
+    },
   },
 };
 </script>
@@ -199,7 +287,7 @@ header {
 }
 
 .labelContainer {
-  width: 90%;
+  width: 100%;
   height: 8vh;
   margin-top: 3vh;
   display: flex;
@@ -214,7 +302,7 @@ header {
 }
 
 .doneLabelContainer {
-  width: 90%;
+  width: 100%;
   height: 8vh;
   display: flex;
   align-items: center;
@@ -223,7 +311,7 @@ header {
   background-color: var(--customGreen);
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 900px) {
   .dateContainer {
     width: 30%;
   }
@@ -231,7 +319,7 @@ header {
   .cardsContainer {
     flex-flow: row wrap;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: space-around;
   }
 
   .cardContainer {
