@@ -1,5 +1,5 @@
 <template>
-  <section class="cardContainer">
+  <!-- <section class="cardContainer">
     <div class="cardHeader">
       <p class="bold nameContainer">
         NAME: <span class="normal">{{ mName }}</span>
@@ -65,11 +65,117 @@
         <button class="greenBtn" @click="timeSpent" v-else>CONFIRM</button>
       </div>
     </div>
-  </section>
+  </section> -->
+
+  <div class="q-pa-md row items-start q-gutter-md cardContainer">
+    <q-card class="my-card cardShadow" bordered>
+      <q-card-section class="sectionCardPadding">
+        <div class="text-body2" :style="checkTagColor">{{ asset }}</div>
+        <div class="text-h4 q-mt-sm q-mb-xs" style="margin-bottom: 2vh">
+          {{ mName }}
+        </div>
+        <div class="text-subtitle1">
+          <p class="bold space10">
+            EXPIRE: <span class="normal">{{ expireDs }} - </span>
+            <span id="expireSpan">{{ expireI }} DAYS</span>
+          </p>
+
+          <p class="bold space10">
+            ESTIMATED TIME:
+            <span class="normal days" :style="checkEstimatedTime"
+              >{{ estimated }} days</span
+            >
+          </p>
+        </div>
+
+        <div class="text-body1 text-grey q-btn--actionable description">
+          {{ mDescription }}
+        </div>
+      </q-card-section>
+
+      <q-card-section class="column justify-start items-start" v-if="mSpentKey">
+        <p class="bold text-h6" style="margin-bottom: 1vh">How long did it take?</p>
+
+        <p class="bold text-subtitle2 text-red" style="margin-bottom: 1vh" v-if="inputKey">Please enter a value other than zero</p>
+
+        <div class="row justify-start items-baseline text-body1">
+          <q-input
+            type="number"
+            label="Time spent on"
+            :dense="dense"
+            v-model="inputValue"
+          />
+          <span class="days">days</span>
+        </div>
+      </q-card-section>
+
+      <q-card-actions>
+        <q-btn
+          flat
+          color="dark"
+          label="Btn"
+          @click="changeDscText"
+          v-if="!mSpentKey"
+        />
+        <q-btn flat color="dark" label="Back" @click="changeTimeKey" v-else />
+
+        <q-btn
+          flat
+          color="primary"
+          label="Done"
+          @click="changeTimeKey"
+          v-if="!mSpentKey"
+        />
+        <q-btn flat color="primary" label="Confirm" @click="timeSpent" v-else />
+        <q-space />
+
+        <div
+          class="row justify-center items-center q-btn--actionable"
+          @click="expanded = !expanded"
+        >
+          DETAILS
+          <q-btn
+            color="grey"
+            round
+            flat
+            dense
+            :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+          />
+        </div>
+      </q-card-actions>
+
+      <q-slide-transition>
+        <div v-show="expanded">
+          <q-separator />
+          <q-card-section class="text-body2">
+            <p class="bold">
+              SIMILAR MACHINE: <span class="normal">{{ similar }}</span>
+            </p>
+            <p class="bold">
+              APPOINTEE: <span class="normal">{{ mAppointee }}</span>
+            </p>
+            <p class="bold formatSp">
+              RESPONSIBLE: <span class="normal">{{ mResponsible }}</span>
+            </p>
+          </q-card-section>
+        </div>
+      </q-slide-transition>
+    </q-card>
+  </div>
 </template>
 
 <script>
+import { ref } from "vue";
+
 export default {
+  setup() {
+    return {
+      expanded: ref(false),
+      lorem:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    };
+  },
+
   name: "Card",
 
   props: {
@@ -92,7 +198,7 @@ export default {
 
   data() {
     return {
-      inputValue: 0,
+      inputValue: "",
     };
   },
 
@@ -100,12 +206,12 @@ export default {
     //DONE
     checkTagColor() {
       if (this.asset === "Vehicle") {
-        return { backgroundColor: "var(--vehicleColor)", fontWeight: "bold" };
+        return { color: "var(--vehicleColor)", fontWeight: "bold" };
       } else if (this.asset === "Machine") {
-        return { backgroundColor: "var(--machineColor)", fontWeight: "bold" };
+        return { color: "var(--machineColor)", fontWeight: "bold" };
       } else if (this.asset === "Eletronics") {
         return {
-          backgroundColor: "var(--eletronicsColor)",
+          color: "var(--eletronicsColor)",
           fontWeight: "bold",
         };
       } else {
@@ -156,8 +262,7 @@ export default {
         this.$emit("change-input-key", {
           machineId: this.tag,
           inputK: this.validInput,
-        })
-
+        });
       } else if (typeof this.mSpentOn === "number") {
         this.$emit("time-spent-on", {
           machineId: this.tag,
@@ -190,145 +295,24 @@ export default {
 };
 </script>
 
-<style>
-.cardContainer,
-.doneCardsContainer {
+<style lang="scss">
+.my-card {
   width: 100%;
-  padding-top: 3vh;
-  display: flex;
-  flex-flow: column;
 }
 
-.cardHeader {
-  padding: 2vh;
-  border-radius: 10px 10px 0 0;
-  border: 0.5px solid darkgray;
-  background: var(--lightGray);
+.sectionCardPadding {
+  padding: 16px 16px 0 16px !important;
 }
 
-.subCardHeader {
-  display: flex;
-  flex-flow: column;
+.cardShadow {
+  box-shadow: 1px 2px 13px 0px #3333 !important;
 }
 
-.expireType {
-  display: flex;
-  flex-flow: column;
+.description {
+  margin-top: 2vh;
 }
 
 .days {
   margin-left: 1vh;
-}
-
-#expireSpan {
-  color: black;
-}
-
-#machineType {
-  width: 20%;
-  padding: 0.5vh 3vh;
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.cardDescription {
-  display: flex;
-  flex-flow: column;
-  padding: 3vh 2vh;
-  border-radius: 0 0 10px 10px;
-  border-bottom: 0.5px solid darkgray;
-  border-left: 0.5px solid darkgray;
-  border-right: 0.5px solid darkgray;
-}
-
-.moreDetails {
-  margin-top: 1vh;
-}
-
-.moreDetails p {
-  margin-top: 2vh;
-}
-
-.spentOnContainer {
-  padding: 2vh 1vh;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  background: var(--lightGray);
-}
-
-.inputBanner {
-  margin-top: 1vh;
-  font-size: 13px;
-  color: red;
-}
-
-.spentOnInput {
-  display: flex;
-  flex-flow: row;
-  align-items: baseline;
-  justify-content: center;
-}
-
-.spentOnInput input {
-  width: 50%;
-  text-align: center;
-  font-size: 15px;
-  border-bottom: 2px solid #c1c1c1;
-  color: #c1c1c1;
-  background: transparent;
-}
-
-.btnContainer {
-  margin-top: 2vh;
-  display: flex;
-  justify-content: space-between;
-}
-
-.blackBtn,
-.greenBtn,
-.yellowBtn {
-  width: 49%;
-  padding: 2vh 4vh;
-  border-radius: 20px;
-  font-weight: bold;
-  font-style: italic;
-}
-
-.blackBtn {
-  border: 2px solid white;
-  color: white;
-  background-color: var(--primaryColor);
-}
-
-.greenBtn {
-  border: 2px solid var(--customGreen);
-  color: var(--customGreen);
-  background-color: white;
-}
-
-.yellowBtn {
-  border: 2px solid var(--primaryColor);
-  color: var(--primaryColor);
-  background-color: var(--customYellow);
-}
-
-.doneLabel {
-  width: 100%;
-  height: 8vh;
-  display: flex;
-  align-items: center;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  color: white;
-  background-color: var(--customGreen);
-}
-
-.doneLabel h3 {
-  margin-left: 2vh;
 }
 </style>
