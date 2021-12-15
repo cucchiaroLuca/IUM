@@ -1,3 +1,81 @@
-@import './quasar.variables.scss';
+@import "./quasar.variables.scss";
 @import '~quasar-styl';
 // @import '~quasar-addon-styl';
+
+/*  Global CSS */
+
+:root {
+  --primaryColor: #181818;
+  --lightGray: #ececec;
+  --customYellow: #ffbf5f;
+  --vehicleColor: #dd4cf4;
+  --machineColor: #1c5dbe;
+  --eletronicsColor: #d75e2b;
+  --customGreen: #009217;
+}
+
+* {
+  margin: 0;
+  border: 0;
+}
+
+body {
+  font-family: "-apple-system", sans-serif !important;
+}
+
+.bold {
+  font-weight: bold !important;
+}
+
+.normal {
+  font-weight: normal !important;
+}
+
+.formatSp {
+  margin: 0;
+}
+
+.space10 {
+  margin: 0 0 10px !important;
+}
+
+/* Card CSS */
+
+.my-card {
+  width: 100%;
+}
+
+.sectionCardPadding {
+  padding: 16px 16px 0 16px !important;
+}
+
+.cardShadow {
+  box-shadow: 1px 2px 13px 0px #3333 !important;
+}
+
+.description {
+  margin-top: 2vh;
+}
+
+.daysInput {
+  margin-left: 1vh;
+}
+
+.doneCardAction {
+  padding: 8px 16px !important;
+}
+
+/* Media CSS */
+
+@media only screen and (min-width: 800px) {
+  #tasks,
+  #done {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+
+  .cardContainer {
+    width: 33.3%;
+  }
+}

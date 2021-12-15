@@ -260,8 +260,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.doneCardAction {
-  padding: 8px 16px !important;
-}
-</style>
+<style lang="scss"></style>

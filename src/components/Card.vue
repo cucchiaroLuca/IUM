@@ -71,7 +71,7 @@
     <q-card class="my-card cardShadow" bordered>
       <q-card-section class="sectionCardPadding">
         <div class="text-body2" :style="checkTagColor">{{ asset }}</div>
-        <div class="text-h4 q-mt-sm q-mb-xs" style="margin-bottom: 2vh">
+        <div class="text-h4 q-mt-sm q-mb-xs formatSp">
           {{ mName }}
         </div>
         <div class="text-subtitle1">
@@ -94,9 +94,17 @@
       </q-card-section>
 
       <q-card-section class="column justify-start items-start" v-if="mSpentKey">
-        <p class="bold text-h6" style="margin-bottom: 1vh">How long did it take?</p>
+        <p class="bold text-h6" style="margin-bottom: 1vh">
+          How long did it take?
+        </p>
 
-        <p class="bold text-subtitle2 text-red" style="margin-bottom: 1vh" v-if="inputKey">Please enter a value other than zero</p>
+        <p
+          class="bold text-subtitle2 text-red"
+          style="margin-bottom: 1vh"
+          v-if="inputKey"
+        >
+          Please enter a value other than zero
+        </p>
 
         <div class="row justify-start items-baseline text-body1">
           <q-input
@@ -105,7 +113,7 @@
             :dense="dense"
             v-model="inputValue"
           />
-          <span class="days">days</span>
+          <span class="daysInput">days</span>
         </div>
       </q-card-section>
 
@@ -295,24 +303,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.my-card {
-  width: 100%;
-}
-
-.sectionCardPadding {
-  padding: 16px 16px 0 16px !important;
-}
-
-.cardShadow {
-  box-shadow: 1px 2px 13px 0px #3333 !important;
-}
-
-.description {
-  margin-top: 2vh;
-}
-
-.days {
-  margin-left: 1vh;
-}
-</style>
+<style lang="scss"></style>
