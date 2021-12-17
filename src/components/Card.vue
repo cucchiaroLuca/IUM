@@ -1,83 +1,15 @@
 <template>
-  <!-- <section class="cardContainer">
-    <div class="cardHeader">
-      <p class="bold nameContainer">
-        NAME: <span class="normal">{{ mName }}</span>
-      </p>
-
-      <div class="subCardHeader space">
-        <div class="expireType">
-          <p class="bold">
-            EXPIRE: <span class="normal">{{ expireDs }} - </span>
-            <span id="expireSpan">{{ expireI }} DAYS</span>
-          </p>
-
-          <div class="space">
-            <p class="bold">
-              ESTIMATED TIME:
-
-              <span class="normal days" :style="checkEstimatedTime"
-                >{{ estimated }} days</span
-              >
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <span id="machineType" class="assetType space" :style="checkTagColor">{{
-        asset
-      }}</span>
-    </div>
-
-    <div class="cardDescription">
-      <p>{{ mDescription }}</p>
-
-      <div class="moreDetails" v-if="details">
-        <p class="bold">
-          SIMILAR MACHINE: <span class="normal">{{ similar }}</span>
-        </p>
-        <p class="bold">
-          APPOINTEE: <span class="normal">{{ mAppointee }}</span>
-        </p>
-        <p class="bold">
-          RESPONSIBLE: <span class="normal">{{ mResponsible }}</span>
-        </p>
-      </div>
-
-      <div class="spentOnContainer space" v-if="mSpentKey">
-        <p class="bold">How long did it take?</p>
-        <span class="inputBanner" v-if="inputKey">Please enter a value other than zero</span>
-        <div class="spentOnInput">
-          <input type="number" class="space" v-model="inputValue" />
-          <p class="days">days</p>
-        </div>
-      </div>
-
-      <div class="btnContainer">
-        <button class="blackBtn" @click="changeDscText" v-if="!mSpentKey">
-          {{ descriptionBtnText }}
-        </button>
-        <button class="yellowBtn" @click="changeTimeKey" v-else>BACK</button>
-
-        <button class="greenBtn" @click="changeTimeKey" v-if="!mSpentKey">
-          {{ doneBtnText }}
-        </button>
-        <button class="greenBtn" @click="timeSpent" v-else>CONFIRM</button>
-      </div>
-    </div>
-  </section> -->
-
   <div class="q-pa-md row items-start q-gutter-md cardContainer">
     <q-card class="my-card cardShadow" bordered>
       <q-card-section class="sectionCardPadding">
         <div class="text-body2" :style="checkTagColor">{{ asset }}</div>
-        <div class="text-h4 q-mt-sm q-mb-xs formatSp">
+        <div class="text-h4 q-mt-sm q-mb-xs" style="margin-bottom: 2vh">
           {{ mName }}
         </div>
         <div class="text-subtitle1">
           <p class="bold space10">
             EXPIRE: <span class="normal">{{ expireDs }} - </span>
-            <span id="expireSpan">{{ expireI }} DAYS</span>
+            <span id="expireSpan">({{ expireI }} DAYS)</span>
           </p>
 
           <p class="bold space10">
@@ -93,27 +25,48 @@
         </div>
       </q-card-section>
 
-      <q-card-section class="column justify-start items-start" v-if="mSpentKey">
-        <p class="bold text-h6" style="margin-bottom: 1vh">
-          How long did it take?
-        </p>
+      <q-card-section
+        class="row justify-start items-start wrap"
+        v-if="mSpentKey"
+      >
+        <div style="width: 45%">
+          <p class="bold text-h6 formatSp" style="margin-bottom: 1.5vh">
+            Changes?
+          </p>
 
-        <p
-          class="bold text-subtitle2 text-red"
-          style="margin-bottom: 1vh"
-          v-if="inputKey"
-        >
-          Please enter a value other than zero
-        </p>
+          <div class="q-gutter-sm">
+            <q-checkbox left-label v-model="left" label="Label on Left" />
+          </div>
+          <div class="q-gutter-sm">
+            <q-checkbox left-label v-model="left" label="Label on Left" />
+          </div>
+          <div class="q-gutter-sm">
+            <q-checkbox left-label v-model="left" label="Label on Left" />
+          </div>
+        </div>
 
-        <div class="row justify-start items-baseline text-body1">
-          <q-input
-            type="number"
-            label="Time spent on"
-            :dense="dense"
-            v-model="inputValue"
-          />
-          <span class="daysInput">days</span>
+        <div style="width: 45%">
+          <p class="bold text-h6 formatSp" style="margin-bottom: 1vh">
+            How long did it take?
+          </p>
+
+          <p
+            class="bold text-subtitle2 text-red"
+            style="margin-bottom: 1vh"
+            v-if="inputKey"
+          >
+            Please enter a value other than zero
+          </p>
+
+          <div class="row justify-start items-baseline text-body1">
+            <q-input
+              type="number"
+              label="Time spent on"
+              :dense="dense"
+              v-model="inputValue"
+            />
+            <span class="daysInput">days</span>
+          </div>
         </div>
       </q-card-section>
 
@@ -121,11 +74,10 @@
         <q-btn
           flat
           color="dark"
-          label="Btn"
-          @click="changeDscText"
-          v-if="!mSpentKey"
+          label="Back"
+          @click="changeTimeKey"
+          v-if="mSpentKey"
         />
-        <q-btn flat color="dark" label="Back" @click="changeTimeKey" v-else />
 
         <q-btn
           flat
@@ -134,7 +86,17 @@
           @click="changeTimeKey"
           v-if="!mSpentKey"
         />
-        <q-btn flat color="primary" label="Confirm" @click="timeSpent" v-else />
+        <q-btn
+          flat
+          color="primary"
+          label="Confirm"
+          @click="
+            timeSpent();
+            setCardStatus();
+          "
+          v-else
+        />
+
         <q-space />
 
         <div
@@ -178,9 +140,9 @@ import { ref } from "vue";
 export default {
   setup() {
     return {
+      dense: "",
       expanded: ref(false),
-      lorem:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      left: ref(false),
     };
   },
 
@@ -202,7 +164,15 @@ export default {
     mSpentKey: Boolean,
     mSpentOn: Number,
     inputKey: Boolean,
+    done: Boolean,
   },
+
+  emits: [
+    "change-time",
+    "change-input-key",
+    "time-spent-on",
+    "set-card-status",
+  ],
 
   data() {
     return {
@@ -211,7 +181,6 @@ export default {
   },
 
   computed: {
-    //DONE
     checkTagColor() {
       if (this.asset === "Vehicle") {
         return { color: "var(--vehicleColor)", fontWeight: "bold" };
@@ -227,17 +196,6 @@ export default {
       }
     },
 
-    //DONE
-    descriptionBtnText() {
-      return this.details ? "SEE LESS" : "SEE MORE";
-    },
-
-    //DONE
-    doneBtnText() {
-      return this.mSpentKey ? "CONFIRM" : "DONE";
-    },
-
-    //DONE
     checkEstimatedTime() {
       if (this.estimated >= this.expireI) {
         return { color: "red" };
@@ -248,15 +206,6 @@ export default {
   },
 
   methods: {
-    //DONE
-    changeDscText() {
-      this.$emit("change-dsc", {
-        machineId: this.tag,
-        machineDetail: this.details,
-      });
-    },
-
-    //DONE
     changeTimeKey() {
       this.$emit("change-time", {
         machineId: this.tag,
@@ -264,7 +213,6 @@ export default {
       });
     },
 
-    //DONE
     timeSpent() {
       if (this.inputValue == "") {
         this.$emit("change-input-key", {
@@ -288,19 +236,17 @@ export default {
           mSpentKey: this.mSpentKey,
           mSpentOn: this.mSpentOn,
           inputKey: this.inputKey,
+          done: this.done,
         });
       }
     },
 
-    //DONE
-    updateExpireDay() {
-      this.$emit("expire-format", {
-        expireDate: this.expireD,
-        expireIn: this.expireI,
+    setCardStatus() {
+      this.$emit("set-card-status", {
+        machineId: this.tag,
+        cardSt: this.done,
       });
     },
   },
 };
 </script>
-
-<style lang="scss"></style>
