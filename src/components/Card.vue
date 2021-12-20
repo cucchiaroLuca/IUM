@@ -29,23 +29,7 @@
         class="row justify-start items-start wrap"
         v-if="mSpentKey"
       >
-        <div style="width: 45%">
-          <p class="bold text-h6 formatSp" style="margin-bottom: 1.5vh">
-            Changes?
-          </p>
-
-          <div class="q-gutter-sm">
-            <q-checkbox left-label v-model="left" label="Label on Left" />
-          </div>
-          <div class="q-gutter-sm">
-            <q-checkbox left-label v-model="left" label="Label on Left" />
-          </div>
-          <div class="q-gutter-sm">
-            <q-checkbox left-label v-model="left" label="Label on Left" />
-          </div>
-        </div>
-
-        <div style="width: 45%">
+        <div>
           <p class="bold text-h6 formatSp" style="margin-bottom: 1vh">
             How long did it take?
           </p>
@@ -70,49 +54,57 @@
         </div>
       </q-card-section>
 
-      <q-card-actions>
+      <div class="flex row" style="padding: 8px 0; margin-top: 8px">
+        <q-btn
+          flat
+          color="dark"
+          label="Docs"
+          class="btnDocs formatSp"
+          v-if="!mSpentKey"
+          @click="downloadFile"
+        />
+
+        <q-btn-dropdown
+          flat
+          color="primary"
+          label="Details"
+          class="formatSp btnDetails"
+          v-if="!mSpentKey"
+          @click="expanded = !expanded"
+        />
+
+        <q-space />
+
         <q-btn
           flat
           color="dark"
           label="Back"
-          @click="changeTimeKey"
+          @click="
+            changeTimeKey();
+            resetInputStatus();
+          "
           v-if="mSpentKey"
         />
 
         <q-btn
-          flat
           color="primary"
           label="Done"
+          class="btnDone"
           @click="changeTimeKey"
           v-if="!mSpentKey"
         />
+
         <q-btn
-          flat
           color="primary"
           label="Confirm"
+          class="btnConfirm"
           @click="
             timeSpent();
             setCardStatus();
           "
           v-else
         />
-
-        <q-space />
-
-        <div
-          class="row justify-center items-center q-btn--actionable"
-          @click="expanded = !expanded"
-        >
-          DETAILS
-          <q-btn
-            color="grey"
-            round
-            flat
-            dense
-            :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-          />
-        </div>
-      </q-card-actions>
+      </div>
 
       <q-slide-transition>
         <div v-show="expanded">
@@ -136,6 +128,7 @@
 
 <script>
 import { ref } from "vue";
+import axios from "axios";
 
 export default {
   setup() {
@@ -214,7 +207,8 @@ export default {
     },
 
     timeSpent() {
-      if (this.inputValue == "") {
+      if (this.inputValue == "" || this.inputValue == "0") {
+        this.inputValue = "";
         this.$emit("change-input-key", {
           machineId: this.tag,
           inputK: this.validInput,
@@ -245,6 +239,27 @@ export default {
       this.$emit("set-card-status", {
         machineId: this.tag,
         cardSt: this.done,
+      });
+    },
+
+    resetInputStatus() {
+      this.$emit("reset-input-status", {
+        machineId: this.tag,
+      });
+    },
+
+    downloadFile() {
+      axios({
+        url: "http://localhost:8080/documents/eletronics.pdf",
+        method: "GET",
+        responseType: "blob",
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "DOCS.pdf");
+        document.body.appendChild(link);
+        link.click();
       });
     },
   },

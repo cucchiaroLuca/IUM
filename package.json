@@ -10,6 +10,7 @@
   "dependencies": {
     "@quasar/cli": "^1.2.2",
     "@quasar/extras": "^1.0.0",
+    "axios": "^0.24.0",
     "bulma": "^0.9.3",
     "core-js": "^3.6.5",
     "quasar": "^2.0.0",

@@ -9,7 +9,7 @@
         <div class="text-subtitle1">
           <p class="bold space10">
             EXPIRE: <span class="normal">{{ expireDs }} - </span>
-            <span id="expireSpan">{{ expireI }} DAYS</span>
+            <span id="expireSpan">({{ expireI }} DAYS)</span>
           </p>
 
           <p class="bold space10">
@@ -25,21 +25,18 @@
         </div>
       </q-card-section>
 
-      <q-card-actions class="justify-end doneCardAction">
-        <div
-          class="row justify-end items-center q-btn--actionable"
+      <div class="flex row" style="padding: 8px 16px; margin-top: 8px">
+        <q-btn-dropdown
+          flat
+          color="primary"
+          label="Details"
+          class="formatSp"
+          v-if="true"
           @click="expanded = !expanded"
-        >
-          DETAILS
-          <q-btn
-            color="grey"
-            round
-            flat
-            dense
-            :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-          />
-        </div>
-      </q-card-actions>
+        />
+
+        <q-space />
+      </div>
 
       <q-slide-transition>
         <div v-show="expanded">
@@ -69,12 +66,11 @@ export default {
     return {
       dense: "",
       expanded: ref(false),
-      lorem:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      left: ref(false),
     };
   },
 
-  name: "Done",
+  name: "Card",
 
   props: {
     details: Boolean,
@@ -92,9 +88,15 @@ export default {
     mSpentKey: Boolean,
     mSpentOn: Number,
     inputKey: Boolean,
+    done: Boolean,
   },
 
-  emits: ['change-time', 'change-input-key', 'time-spent-on', 'set-card-status'],
+  emits: [
+    "change-time",
+    "change-input-key",
+    "time-spent-on",
+    "set-card-status",
+  ],
 
   data() {
     return {
@@ -172,5 +174,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss"></style>

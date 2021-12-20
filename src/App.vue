@@ -18,7 +18,6 @@
             />
             <div
               class="flex row items-center justify-center headerSb"
-              style="color: #2a567a"
             >
               <p class="text-body1 text-center text-bold text-italic formatSp">
                 Today: {{ currentDateTime() }}
@@ -30,7 +29,7 @@
       </q-header>
 
       <q-footer bordered class="ghostWhite text-primary flex column items-center justify-center">
-        <div class="flex items-center justify-center text-body1 footerDataCt" style="width: 100%; padding: 10px 0; border-bottom: 1px solid lightgray">
+        <div class="flex items-center justify-center text-body1 text-bold text-italic footerDataCt" style="width: 100%; padding: 10px 0; border-bottom: 1px solid lightgray">
           Today: {{ currentDateTime() }}
         </div>
         
@@ -81,6 +80,7 @@
               @change-time="changeTime"
               @time-spent-on="timeSpentOn"
               @change-input-key="changeInputKey"
+              @reset-input-status="resetInputStatus"
             ></card>
           </div>
 
@@ -108,6 +108,7 @@
               @change-time="changeTime"
               @time-spent-on="timeSpentOn"
               @change-input-key="changeInputKey"
+              @reset-input-status="resetInputStatus"
             ></done>
           </div>
         </q-page>
@@ -269,6 +270,12 @@ export default {
       this.findObj(mObject);
 
       this.cards[this.index].validInput = true;
+    },
+
+    resetInputStatus(mObject) {
+      this.findObj(mObject);
+
+      this.cards[this.index].validInput = false;
     },
   },
 };
