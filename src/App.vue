@@ -7,7 +7,7 @@
       class="shadow-2 rounded-borders"
     >
       <q-header bordered class="text-primary ghostWhite">
-        <q-toolbar style="padding: 10px 32px">
+        <q-toolbar class="toolbar">
           <q-toolbar-title
             class="flex wrap items-center justify-between header"
           >
@@ -16,23 +16,38 @@
               src="./images/logo.png"
               alt="plastic technologies logo"
             />
-            <div
-              class="flex row items-center justify-center headerSb"
-            >
-              <p class="text-body1 text-center text-bold text-italic formatSp">
+
+            <div class="flex row items-end justify-center headerSb" style="color: #2f2f2f">
+              <p class="text-body1 text-center text-bold formatSp">
                 Today: {{ currentDateTime() }}
               </p>
-              <!-- <span class="material-icons" style="font-size: 28px; margin-left: 1vh;"> today </span> -->
+              <span class="material-icons" style="font-size: 25px;"> today </span>
             </div>
           </q-toolbar-title>
         </q-toolbar>
       </q-header>
 
-      <q-footer bordered class="ghostWhite text-primary flex column items-center justify-center">
-        <div class="flex items-center justify-center text-body1 text-bold text-italic footerDataCt" style="width: 100%; padding: 10px 0; border-bottom: 1px solid lightgray">
+      <q-footer
+        bordered
+        class="ghostWhite text-primary flex column items-center justify-center"
+      >
+        <div
+          class="
+            flex
+            items-center
+            justify-center
+            text-body1 text-bold text-italic
+            footerDataCt
+          "
+          style="
+            width: 100%;
+            padding: 10px 0;
+            border-bottom: 1px solid lightgray;
+          "
+        >
           Today: {{ currentDateTime() }}
         </div>
-        
+
         <q-tabs
           no-caps
           active-color="primary"
@@ -81,6 +96,7 @@
               @time-spent-on="timeSpentOn"
               @change-input-key="changeInputKey"
               @reset-input-status="resetInputStatus"
+              @download-file="downloadFile"
             ></card>
           </div>
 
@@ -109,6 +125,7 @@
               @time-spent-on="timeSpentOn"
               @change-input-key="changeInputKey"
               @reset-input-status="resetInputStatus"
+              @download-file="downloadFile"
             ></done>
           </div>
         </q-page>
@@ -121,6 +138,7 @@
 import { ref } from "vue";
 import Card from "./components/Card.vue";
 import Done from "./components/Done.vue";
+import axios from "axios";
 
 export default {
   name: "App",
@@ -143,8 +161,8 @@ export default {
           moreDetails: false,
           machineTag: "3894",
           name: "Name1",
-          expireDate: new Date(2021, 11, 13),
-          expireDateString: new Date(2021, 11, 13).toDateString(),
+          expireDate: new Date(2022, 11, 13),
+          expireDateString: new Date(2022, 11, 13).toDateString(),
           expireIn: Number,
           assetType: "Vehicle",
           description:
@@ -203,6 +221,7 @@ export default {
 
   created: function () {
     this.updateDates();
+    this.sortDates();
   },
 
   methods: {
@@ -214,12 +233,25 @@ export default {
         this.firstDate = this.currentDay;
         this.secondDate = this.cards[this.i].expireDate;
 
-        this.diffDays = Math.round(
-          Math.abs((this.firstDate - this.secondDate) / this.oneDay)
-        );
+        if (this.firstDate > this.secondDate) {
+          this.diffDays = -1;
+          this.cards[this.i].expireIn = this.diffDays;
+        } else {
+          this.diffDays = Math.round(
+            Math.abs((this.firstDate - this.secondDate) / this.oneDay)
+          );
 
-        this.cards[this.i].expireIn = this.diffDays;
+          this.cards[this.i].expireIn = this.diffDays;
+        }
       }
+    },
+
+    sortDates() {
+      console.log("Sorting =)");
+
+      //TODO: Aggiornare ogni volta che avviene un cambiamento =)
+      this.cards.sort((a, b) => a.expireDate - b.expireDate);
+      console.log(this.cards);
     },
 
     currentDateTime() {
@@ -276,6 +308,32 @@ export default {
       this.findObj(mObject);
 
       this.cards[this.index].validInput = false;
+    },
+
+    downloadFile(mObject) {
+      if (mObject.asset == "Vehicle") {
+        this.urlVar = "http://localhost:8080/documents/vehicle.pdf";
+        this.fileName = "Vehicle DOCS.pdf";
+      } else if (mObject.asset == "Machine") {
+        this.urlVar = "http://localhost:8080/documents/machine.pdf";
+        this.fileName = "Machine DOCS.pdf";
+      } else if (mObject.asset == "Eletronics") {
+        this.urlVar = "http://localhost:8080/documents/eletronics.pdf";
+        this.fileName = "Eletronics DOCS.pdf";
+      }
+
+      axios({
+        url: this.urlVar,
+        method: "GET",
+        responseType: "blob",
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", this.fileName);
+        document.body.appendChild(link);
+        link.click();
+      });
     },
   },
 };

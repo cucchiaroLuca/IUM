@@ -2,6 +2,12 @@
   <div class="q-pa-md row items-start q-gutter-md cardContainer">
     <q-card class="my-card cardShadow" bordered>
       <q-card-section class="sectionCardPadding">
+        <div class="warningCtn">
+          <span class="material-icons warningIcon" v-if="expireI === -1">
+            error_outline
+          </span>
+          <q-tooltip> Tasks is expired! </q-tooltip>
+        </div>
         <div class="text-body2" :style="checkTagColor">{{ asset }}</div>
         <div class="text-h4 q-mt-sm q-mb-xs" style="margin-bottom: 2vh">
           {{ mName }}
@@ -9,7 +15,8 @@
         <div class="text-subtitle1">
           <p class="bold space10">
             EXPIRE: <span class="normal">{{ expireDs }} - </span>
-            <span id="expireSpan">({{ expireI }} DAYS)</span>
+            <span id="expireSpan" v-if="expireI === -1">(EXPIRED)</span>
+            <span id="expireSpan" v-else>({{ expireI }} DAYS)</span>
           </p>
 
           <p class="bold space10">
@@ -128,7 +135,6 @@
 
 <script>
 import { ref } from "vue";
-import axios from "axios";
 
 export default {
   setup() {
@@ -165,6 +171,7 @@ export default {
     "change-input-key",
     "time-spent-on",
     "set-card-status",
+    "download-file",
   ],
 
   data() {
@@ -249,17 +256,9 @@ export default {
     },
 
     downloadFile() {
-      axios({
-        url: "http://localhost:8080/documents/eletronics.pdf",
-        method: "GET",
-        responseType: "blob",
-      }).then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "DOCS.pdf");
-        document.body.appendChild(link);
-        link.click();
+      this.$emit("download-file", {
+        machineId: this.tag,
+        asset: this.asset,
       });
     },
   },

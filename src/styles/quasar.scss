@@ -50,6 +50,16 @@ body {
   font-size: 28px;
 }
 
+.toolbar {
+  padding: 10px 32px;
+}
+
+.rowDate {
+  cursor: pointer;
+  font-size: 30px;
+  color: var(--primaryColor);
+}
+
 /* Card CSS */
 
 .my-card {
@@ -78,6 +88,7 @@ body {
 
 .btnConfirm {
   margin-left: 1vh;
+  margin-right: 8px;
 }
 
 .btnDone {
@@ -90,6 +101,23 @@ body {
 
 .btnDetails {
   margin-left: 2vh;
+}
+
+.warningCtn {
+  position: absolute;
+  top: 3vh;
+  right: 3vh;
+}
+
+.warningIcon {
+  font-size: 30px;
+  color: var(--eletronicsColor);
+}
+
+/* Quasar CSS */
+
+.q-btn-dropdown--simple * + .q-btn-dropdown__arrow {
+  margin: 0;
 }
 
 /* Media CSS */
@@ -114,7 +142,11 @@ body {
   }
 }
 
-@media only screen and (min-width: 800px) {
+@media only screen and (min-width: 1000px) {
+  .toolbar {
+    padding: 10px 64px;
+  }
+
   #tasks,
   #doneTasks {
     display: flex;
