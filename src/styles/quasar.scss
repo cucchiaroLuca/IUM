@@ -5,6 +5,8 @@
 /*  Global CSS */
 
 :root {
+  --primaryBlue: #027be3;
+  --primaryBlueBg: #e3e9f2;
   --primaryColor: #181818;
   --lightGray: #ececec;
   --customYellow: #ffbf5f;
@@ -60,6 +62,11 @@ body {
   color: var(--primaryColor);
 }
 
+.todayIcon {
+  font-size: 25px;
+  margin-left: 1vh;
+}
+
 /* Card CSS */
 
 .my-card {
@@ -97,10 +104,42 @@ body {
 
 .btnDocs {
   margin-left: 16px;
+
+  &::after {
+    background: var(--primaryColor);
+  }
 }
 
 .btnDetails {
   margin-left: 2vh;
+
+  &::after {
+    background: var(--primaryBlue);
+  }
+}
+
+.btnDocs,
+.btnDetails {
+  display: inline-block;
+
+  &:hover {
+    span {
+      background: transparent !important;
+    }
+  }
+
+  &::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 2px;
+    margin-top: 10px;
+    transition: width 0.3s;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
 }
 
 .warningCtn {
@@ -131,7 +170,7 @@ body {
     margin-top: 1vh;
   }
 
-  .formatSp {
+  .headerSb {
     display: none;
   }
 }

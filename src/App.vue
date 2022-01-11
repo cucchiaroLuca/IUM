@@ -17,11 +17,11 @@
               alt="plastic technologies logo"
             />
 
-            <div class="flex row items-end justify-center headerSb" style="color: #2f2f2f">
+            <div class="flex row items-end justify-center headerSb">
               <p class="text-body1 text-center text-bold formatSp">
                 Today: {{ currentDateTime() }}
               </p>
-              <span class="material-icons" style="font-size: 25px;"> today </span>
+              <!-- <span class="material-icons todayIcon"> today </span> -->
             </div>
           </q-toolbar-title>
         </q-toolbar>
@@ -156,13 +156,14 @@ export default {
   data() {
     return {
       currentDay: new Date(),
+      doneBanner: false,
       cards: [
         {
           moreDetails: false,
           machineTag: "3894",
           name: "Name1",
-          expireDate: new Date(2022, 11, 13),
-          expireDateString: new Date(2022, 11, 13).toDateString(),
+          expireDate: new Date(2022, 2, 15),
+          expireDateString: new Date(2022, 2, 15).toDateString(),
           expireIn: Number,
           assetType: "Vehicle",
           description:
@@ -180,8 +181,8 @@ export default {
           moreDetails: false,
           machineTag: "8465",
           name: "Name2",
-          expireDate: new Date(2021, 11, 18),
-          expireDateString: new Date(2021, 11, 18).toDateString(),
+          expireDate: new Date(2021, 11, 30),
+          expireDateString: new Date(2021, 11, 30).toDateString(),
           expireIn: Number,
           assetType: "Machine",
           description:
@@ -219,6 +220,8 @@ export default {
     };
   },
 
+  watch: {},
+
   created: function () {
     this.updateDates();
     this.sortDates();
@@ -248,8 +251,7 @@ export default {
 
     sortDates() {
       console.log("Sorting =)");
-
-      //TODO: Aggiornare ogni volta che avviene un cambiamento =)
+      
       this.cards.sort((a, b) => a.expireDate - b.expireDate);
       console.log(this.cards);
     },
@@ -335,6 +337,10 @@ export default {
         link.click();
       });
     },
+
+    bannerStatus() {
+      this.doneBanner = !this.doneBanner;
+    }
   },
 };
 </script>
